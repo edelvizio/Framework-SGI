@@ -1,0 +1,18 @@
+site_name: SGI INPI – Framework
+theme:
+  name: material
+  language: pt
+nav:
+  - Início: index.md
+  - Etapa 1 – Diagnóstico (ISO 56002): etapa1-diagnostico-iso56002.md
+  - Etapa 2 – Ideação (TRIZ/ISO 56007): etapa2-ideacao-triz-iso56007.md
+  - Etapa 3 – Priorização (AHP/TdM): etapa3-priorizacao-ahp-tdm.md
+  - Etapa 4 – Validação (ISO 56008): etapa4-validacao-iso56008.md
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+plugins:
+  - search

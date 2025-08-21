@@ -211,12 +211,12 @@
   </main>
 
   <footer class="wrap" style="margin:40px auto 60px;">
-    <small>v0.2 – Protótipo estático (GitHub Pages). © 2025</small>
+    <small>v0.2.1 – Protótipo estático (GitHub Pages). © 2025</small>
   </footer>
 
   <script>
     // --- Estado e persistência ---
-    const STORAGE_KEY = 'sgi-prototipo-v02';
+    const STORAGE_KEY = 'sgi-prototipo-v021';
     const el = id => document.getElementById(id);
 
     const state = {
@@ -397,27 +397,40 @@
     // --- Relatório ---
     function buildReport(){
       save();
+      // Coleta defensiva direto do DOM (garante valores mesmo sem salvar antes)
+      const gv = (id)=>{ const n = document.getElementById(id); return n ? (n.value || '') : ''; };
+      const e1i = state.e1.ini || gv('e1_ini');
+      const e1f = state.e1.fim || gv('e1_fim');
+      const e2i = state.e2.ini || gv('e2_ini');
+      const e2f = state.e2.fim || gv('e2_fim');
+      const e3i = state.e3.ini || gv('e3_ini');
+      const e3f = state.e3.fim || gv('e3_fim');
+      const e4i = state.e4.ini || gv('e4_ini');
+      const e4f = state.e4.fim || gv('e4_fim');
+
       const rows = [];
-      // Resumo principal
-      rows.push(['Unidade', state.e1.org]);
-      rows.push(['Período (Etapa 1)', formatPeriod(state.e1.ini, state.e1.fim)]);
-      rows.push(['Itens ISO 56002 críticos', state.e1.itensISO || '—']);
-      rows.push(['Justificativa', state.e1.justISO || '—']);
-      rows.push(['Notas AHP/Fuzzy', state.e1.ahpNotas || '—']);
+      rows.push(['Unidade', state.e1.org || gv('org')]);
+      // retrocompat: se existir dataRef (versão antiga), usa como período quando ini/fim vazios
+      const legacyDataRef = gv('dataRef');
+      const periodoE1 = (!e1i && !e1f && legacyDataRef) ? legacyDataRef : formatPeriod(e1i, e1f);
+      rows.push(['Período (Etapa 1)', periodoE1]);
+      rows.push(['Itens ISO 56002 críticos', state.e1.itensISO || gv('itensISO') || '—']);
+      rows.push(['Justificativa', state.e1.justISO || gv('justISO') || '—']);
+      rows.push(['Notas AHP/Fuzzy', state.e1.ahpNotas || gv('ahpNotas') || '—']);
 
-      rows.push(['Período (Etapa 2)', formatPeriod(state.e2.ini, state.e2.fim)]);
-      rows.push(['Problema (TRIZ)', state.e2.defProblema || '—']);
-      rows.push(['Recursos', state.e2.recursos || '—']);
-      rows.push(['Heurísticas (MPI/TRIZ)', state.e2.heuristicas || '—']);
-      rows.push(['Ideias priorizadas', state.e2.ideias || '—']);
+      rows.push(['Período (Etapa 2)', formatPeriod(e2i, e2f)]);
+      rows.push(['Problema (TRIZ)', state.e2.defProblema || gv('defProblema') || '—']);
+      rows.push(['Recursos', state.e2.recursos || gv('recursos') || '—']);
+      rows.push(['Heurísticas (MPI/TRIZ)', state.e2.heuristicas || gv('heuristicas') || '—']);
+      rows.push(['Ideias priorizadas', state.e2.ideias || gv('ideias') || '—']);
 
-      rows.push(['Período (Etapa 3)', formatPeriod(state.e3.ini, state.e3.fim)]);
-      rows.push(['Ações', state.e3.acoes || '—']);
-      rows.push(['Responsáveis', state.e3.responsaveis || '—']);
-      rows.push(['Incertezas e riscos', state.e3.riscos || '—']);
-      rows.push(['Experimentos/Aprendizados', state.e3.experimentos || '—']);
+      rows.push(['Período (Etapa 3)', formatPeriod(e3i, e3f)]);
+      rows.push(['Ações', state.e3.acoes || gv('acoes') || '—']);
+      rows.push(['Responsáveis', state.e3.responsaveis || gv('responsaveis') || '—']);
+      rows.push(['Incertezas e riscos', state.e3.riscos || gv('riscos') || '—']);
+      rows.push(['Experimentos/Aprendizados', state.e3.experimentos || gv('experimentos') || '—']);
 
-      rows.push(['Período (Etapa 4)', formatPeriod(state.e4.ini, state.e4.fim)]);
+      rows.push(['Período (Etapa 4)', formatPeriod(e4i, e4f)]);
 
       let html = '<table><thead><tr><th>Campo</th><th>Conteúdo</th></tr></thead><tbody>';
       html += rows.map(r=>`<tr><td>${escapeHtml(r[0])}</td><td>${escapeHtml(r[1])}</td></tr>`).join('');
@@ -493,6 +506,14 @@
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
       }
+    });
+
+    // Autosave para todos os campos (evita perder datas antes do relatório)
+    document.addEventListener('input', (e)=>{
+      if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save();
+    });
+    document.addEventListener('change', (e)=>{
+      if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save();
     });
 
     // Inicialização

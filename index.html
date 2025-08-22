@@ -161,26 +161,11 @@
             <input id="e3_fim" type="date" />
           </div>
         </div>
-        <div class="grid cols-2">
-          <div>
-            <label for="acoes">Ações priorizadas</label>
-            <textarea id="acoes" rows="4" placeholder="Ação 1; Ação 2; Ação 3..."></textarea>
-          </div>
-          <div>
-            <label for="responsaveis">Responsáveis / envolvidos</label>
-            <textarea id="responsaveis" rows="4" placeholder="Nomes, equipes, parceiros..."></textarea>
-          </div>
+        <p class="help">Responda às 9 perguntas para cada incerteza. Use o botão para adicionar registros.</p>
+        <div class="toolbar">
+          <button id="addInc">Adicionar incerteza</button>
         </div>
-        <div class="grid cols-2">
-          <div>
-            <label for="riscos">Incertezas, riscos e mitigação</label>
-            <textarea id="riscos" rows="3" placeholder="Principais incertezas, riscos e como tratá-los."></textarea>
-          </div>
-          <div>
-            <label for="experimentos">Experimentos / aprendizados esperados</label>
-            <textarea id="experimentos" rows="3" placeholder="Testes, pilotos, critérios de parada."></textarea>
-          </div>
-        </div>
+        <div id="incList" class="grid"></div>
       </div>
 
       <!-- Etapa 4 -->
@@ -211,18 +196,18 @@
   </main>
 
   <footer class="wrap" style="margin:40px auto 60px;">
-    <small>v0.2.1 – Protótipo estático (GitHub Pages). © 2025</small>
+    <small>v0.3 – Protótipo estático (GitHub Pages). © 2025</small>
   </footer>
 
   <script>
     // --- Estado e persistência ---
-    const STORAGE_KEY = 'sgi-prototipo-v021';
+    const STORAGE_KEY = 'sgi-prototipo-v03';
     const el = id => document.getElementById(id);
 
     const state = {
       e1: { org:'', ini:'', fim:'', itensISO:'', justISO:'', ahpNotas:'' },
       e2: { ini:'', fim:'', defProblema:'', recursos:'', heuristicas:'', ideias:'' },
-      e3: { ini:'', fim:'', acoes:'', responsaveis:'', riscos:'', experimentos:'' },
+      e3: { ini:'', fim:'', incertezas: [] },
       e4: { ini:'', fim:'', kpis: [] }
     };
 
@@ -233,8 +218,11 @@
         const data = JSON.parse(raw);
         if(data.e1){ Object.assign(state.e1, data.e1); }
         if(data.e2){ Object.assign(state.e2, data.e2); }
-        if(data.e3){ Object.assign(state.e3, data.e3); }
-        if(data.e4){ state.e4.kpis = Array.isArray(data.e4.kpis) ? data.e4.kpis : []; Object.assign(state.e4, data.e4); }
+        if(data.e3){
+          Object.assign(state.e3, data.e3);
+          if(!Array.isArray(state.e3.incertezas)) state.e3.incertezas = [];
+        }
+        if(data.e4){ Object.assign(state.e4, data.e4); if(!Array.isArray(state.e4.kpis)) state.e4.kpis = []; }
         // preencher inputs
         el('org').value = state.e1.org || '';
         el('e1_ini').value = state.e1.ini || '';
@@ -252,10 +240,7 @@
 
         el('e3_ini').value = state.e3.ini || '';
         el('e3_fim').value = state.e3.fim || '';
-        el('acoes').value = state.e3.acoes || '';
-        el('responsaveis').value = state.e3.responsaveis || '';
-        el('riscos').value = state.e3.riscos || '';
-        el('experimentos').value = state.e3.experimentos || '';
+        renderIncertezas();
 
         el('e4_ini').value = state.e4.ini || '';
         el('e4_fim').value = state.e4.fim || '';
@@ -266,7 +251,7 @@
     }
 
     function save(){
-      // coletar Etapa 1
+      // Etapa 1
       state.e1.org = el('org').value.trim();
       state.e1.ini = el('e1_ini').value;
       state.e1.fim = el('e1_fim').value;
@@ -285,10 +270,6 @@
       // Etapa 3
       state.e3.ini = el('e3_ini').value;
       state.e3.fim = el('e3_fim').value;
-      state.e3.acoes = el('acoes').value.trim();
-      state.e3.responsaveis = el('responsaveis').value.trim();
-      state.e3.riscos = el('riscos').value.trim();
-      state.e3.experimentos = el('experimentos').value.trim();
 
       // Etapa 4
       state.e4.ini = el('e4_ini').value;
@@ -308,96 +289,187 @@
       document.getElementById(tabId).hidden = false;
     });
 
+    // --- Etapa 3: Incertezas ---
+    function defaultInc(){
+      return { ref:'', incognita:'Proposta 1', impacto:'Mediano', acao:'', tempo:'MePr', despesas:'', hh:'', estimativa:'', fator:'' };
+    }
+
+    function incTemplate(item, idx){
+      const propostas = Array.from({length:20}, (_,i)=>'Proposta '+(i+1));
+      const impactos = ['Crítico','Alto','Mediano','Baixo'];
+      const tempos = ['LoPr','MePr','Imed'];
+      return (
+        '<div class="card" data-idx="'+idx+'">'+
+          '<div class="grid cols-3">'+
+            '<div>'+
+              '<label>Referência</label>'+
+              '<input type="number" min="1" step="1" value="'+escapeAttr(item.ref||'')+'" data-field="ref" placeholder="1, 2, 3..." />'+
+            '</div>'+
+            '<div>'+
+              '<label>Incertezas/incógnitas críticas</label>'+
+              '<select data-field="incognita">'+ propostas.map(p=>'
+<option '+(item.incognita===p?'selected':'')+'>'+p+'</option>').join('') +'</select>'+
+            '</div>'+
+            '<div>'+
+              '<label>Impacto no problema</label>'+
+              '<select data-field="impacto">'+ impactos.map(p=>'
+<option '+(item.impacto===p?'selected':'')+'>'+p+'</option>').join('') +'</select>'+
+            '</div>'+
+          '</div>'+
+          '<div>'+ 
+            '<label>Ação tática para reduzir a incerteza</label>'+ 
+            '<textarea rows="3" data-field="acao" placeholder="Ex.: Apresentar resultados à CGPCT/DIRPA">'+escapeHtml(item.acao||'')+'</textarea>'+ 
+          '</div>'+ 
+          '<div class="grid cols-3">'+
+            '<div>'+ 
+              '<label>Tempo de resposta da ação tática</label>'+ 
+              '<select data-field="tempo">'+ tempos.map(p=>'
+<option '+(item.tempo===p?'selected':'')+'>'+p+'</option>').join('') +'</select>'+ 
+              '<small class="help">LoPr: &gt; 1 ano • MePr: até 12 meses • Imed: &lt; 1 mês</small>'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Despesas diretas</label>'+ 
+              '<input type="number" min="0" step="0.01" data-field="despesas" value="'+escapeAttr(item.despesas||'')+'" placeholder="Ex.: 15000" />'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Homem/hora</label>'+ 
+              '<input type="number" min="0" step="0.1" data-field="hh" value="'+escapeAttr(item.hh||'')+'" placeholder="Ex.: 80" />'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="grid cols-2">'+ 
+            '<div>'+ 
+              '<label>Estimativa de Implementação</label>'+ 
+              '<input type="date" data-field="estimativa" value="'+escapeAttr(item.estimativa||'')+'" />'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Fator crítico de inviabilização da oportunidade</label>'+ 
+              '<textarea rows="2" data-field="fator" placeholder="Ex.: dependência externa, limitação legal">'+escapeHtml(item.fator||'')+'</textarea>'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="toolbar">'+ 
+            '<button class="danger" data-del>Remover</button>'+ 
+          '</div>'+ 
+        '</div>'
+      );
+    }
+
+    function renderIncertezas(){
+      const list = el('incList');
+      if(!state.e3.incertezas.length){
+        list.innerHTML = '<p class="help">Nenhuma incerteza adicionada ainda.</p>';
+        return;
+      }
+      list.innerHTML = state.e3.incertezas.map((it,i)=>incTemplate(it,i)).join('');
+    }
+
+    function addIncerteza(){
+      state.e3.incertezas.push(defaultInc());
+      renderIncertezas();
+      save();
+    }
+
+    el('addInc').addEventListener('click', addIncerteza);
+
+    el('incList').addEventListener('input', (e)=>{
+      const card = e.target.closest('[data-idx]');
+      if(!card) return;
+      const idx = Number(card.getAttribute('data-idx'));
+      const field = e.target.getAttribute('data-field');
+      if(!field) return;
+      const val = e.target.value;
+      state.e3.incertezas[idx][field] = val;
+      save();
+    });
+    el('incList').addEventListener('change', (e)=>{
+      const card = e.target.closest('[data-idx]');
+      if(!card) return;
+      const idx = Number(card.getAttribute('data-idx'));
+      const field = e.target.getAttribute('data-field');
+      if(!field) return;
+      state.e3.incertezas[idx][field] = e.target.value;
+      save();
+    });
+    el('incList').addEventListener('click', (e)=>{
+      if(e.target.matches('[data-del]')){
+        const card = e.target.closest('[data-idx]');
+        const idx = Number(card.getAttribute('data-idx'));
+        state.e3.incertezas.splice(idx,1);
+        renderIncertezas();
+        save();
+      }
+    });
+
     // --- KPIs ---
     function kpiTemplate(kpi, idx){
-      return `
-        <div class="card" data-idx="${idx}">
-          <div class="grid cols-2">
-            <div>
-              <label>Nome do KPI</label>
-              <input value="${kpi.nome||''}" data-field="nome" placeholder="Ex.: Tempo médio de exame PCT" />
-            </div>
-            <div>
-              <label>Frequência</label>
-              <select data-field="freq">
-                ${['Mensal','Trimestral','Semestral','Anual'].map(f=>`<option ${kpi.freq===f?'selected':''}>${f}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div>
-              <label>Métrica (definição)</label>
-              <input value="${kpi.metrica||''}" data-field="metrica" placeholder="Como é calculado?" />
-            </div>
-            <div>
-              <label>Meta</label>
-              <input value="${kpi.meta||''}" data-field="meta" placeholder="Ex.: ≤ 30 dias" />
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div>
-              <label>Responsável</label>
-              <input value="${kpi.owner||''}" data-field="owner" placeholder="Equipe/Servidor" />
-            </div>
-            <div>
-              <label>Fonte de dados</label>
-              <input value="${kpi.fonte||''}" data-field="fonte" placeholder="Sistema/planilha" />
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div>
-              <label>Valor atual</label>
-              <input value="${kpi.atual||''}" data-field="atual" placeholder="Ex.: 45 dias (jul/2025)" />
-            </div>
-            <div>
-              <label>Critério de validação</label>
-              <input value="${kpi.valid||''}" data-field="valid" placeholder="Ex.: 3 ciclos seguidos ≤ meta" />
-            </div>
-          </div>
-          <div class="toolbar">
-            <button class="danger" data-del>Remover</button>
-          </div>
-        </div>
-      `;
+      return (
+        '<div class="card" data-idx="'+idx+'">'+
+          '<div class="grid cols-2">'+
+            '<div>'+
+              '<label>Nome do KPI</label>'+ 
+              '<input value="'+escapeAttr(kpi.nome||'')+'" data-field="nome" placeholder="Ex.: Tempo médio de exame PCT" />'+
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Frequência</label>'+ 
+              '<select data-field="freq">'+ ['Mensal','Trimestral','Semestral','Anual'].map(f=>'
+<option '+(kpi.freq===f?'selected':'')+'>'+f+'</option>').join('') +'</select>'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="grid cols-2">'+ 
+            '<div>'+ 
+              '<label>Métrica (definição)</label>'+ 
+              '<input value="'+escapeAttr(kpi.metrica||'')+'" data-field="metrica" placeholder="Como é calculado?" />'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Meta</label>'+ 
+              '<input value="'+escapeAttr(kpi.meta||'')+'" data-field="meta" placeholder="Ex.: ≤ 30 dias" />'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="grid cols-2">'+ 
+            '<div>'+ 
+              '<label>Responsável</label>'+ 
+              '<input value="'+escapeAttr(kpi.owner||'')+'" data-field="owner" placeholder="Equipe/Servidor" />'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Fonte de dados</label>'+ 
+              '<input value="'+escapeAttr(kpi.fonte||'')+'" data-field="fonte" placeholder="Sistema/planilha" />'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="grid cols-2">'+ 
+            '<div>'+ 
+              '<label>Valor atual</label>'+ 
+              '<input value="'+escapeAttr(kpi.atual||'')+'" data-field="atual" placeholder="Ex.: 45 dias (jul/2025)" />'+ 
+            '</div>'+ 
+            '<div>'+ 
+              '<label>Critério de validação</label>'+ 
+              '<input value="'+escapeAttr(kpi.valid||'')+'" data-field="valid" placeholder="Ex.: 3 ciclos seguidos ≤ meta" />'+ 
+            '</div>'+ 
+          '</div>'+ 
+          '<div class="toolbar">'+ 
+            '<button class="danger" data-del>Remover</button>'+ 
+          '</div>'+ 
+        '</div>'
+      );
     }
 
     function renderKPIs(){
       const list = el('kpiList');
       list.innerHTML = state.e4.kpis.map((k, i)=>kpiTemplate(k,i)).join('');
     }
-
-    function addKPI(){
-      state.e4.kpis.push({freq:'Mensal'});
-      renderKPIs();
-      save();
-    }
-
+    function addKPI(){ state.e4.kpis.push({freq:'Mensal'}); renderKPIs(); save(); }
     el('addKPI').addEventListener('click', addKPI);
-
     el('kpiList').addEventListener('input', (e)=>{
-      const card = e.target.closest('[data-idx]');
-      if(!card) return;
+      const card = e.target.closest('[data-idx]'); if(!card) return;
       const idx = Number(card.getAttribute('data-idx'));
-      const field = e.target.getAttribute('data-field');
-      if(!field) return;
-      state.e4.kpis[idx][field] = e.target.value;
-      save();
+      const field = e.target.getAttribute('data-field'); if(!field) return;
+      state.e4.kpis[idx][field] = e.target.value; save();
     });
-
     el('kpiList').addEventListener('click', (e)=>{
-      if(e.target.matches('[data-del]')){
-        const card = e.target.closest('[data-idx]');
-        const idx = Number(card.getAttribute('data-idx'));
-        state.e4.kpis.splice(idx,1);
-        renderKPIs();
-        save();
-      }
+      if(e.target.matches('[data-del]')){ const card = e.target.closest('[data-idx]'); const idx = Number(card.getAttribute('data-idx')); state.e4.kpis.splice(idx,1); renderKPIs(); save(); }
     });
 
     // --- Relatório ---
     function buildReport(){
       save();
-      // Coleta defensiva direto do DOM (garante valores mesmo sem salvar antes)
       const gv = (id)=>{ const n = document.getElementById(id); return n ? (n.value || '') : ''; };
       const e1i = state.e1.ini || gv('e1_ini');
       const e1f = state.e1.fim || gv('e1_fim');
@@ -410,10 +482,7 @@
 
       const rows = [];
       rows.push(['Unidade', state.e1.org || gv('org')]);
-      // retrocompat: se existir dataRef (versão antiga), usa como período quando ini/fim vazios
-      const legacyDataRef = gv('dataRef');
-      const periodoE1 = (!e1i && !e1f && legacyDataRef) ? legacyDataRef : formatPeriod(e1i, e1f);
-      rows.push(['Período (Etapa 1)', periodoE1]);
+      rows.push(['Período (Etapa 1)', formatPeriod(e1i, e1f)]);
       rows.push(['Itens ISO 56002 críticos', state.e1.itensISO || gv('itensISO') || '—']);
       rows.push(['Justificativa', state.e1.justISO || gv('justISO') || '—']);
       rows.push(['Notas AHP/Fuzzy', state.e1.ahpNotas || gv('ahpNotas') || '—']);
@@ -425,30 +494,45 @@
       rows.push(['Ideias priorizadas', state.e2.ideias || gv('ideias') || '—']);
 
       rows.push(['Período (Etapa 3)', formatPeriod(e3i, e3f)]);
-      rows.push(['Ações', state.e3.acoes || gv('acoes') || '—']);
-      rows.push(['Responsáveis', state.e3.responsaveis || gv('responsaveis') || '—']);
-      rows.push(['Incertezas e riscos', state.e3.riscos || gv('riscos') || '—']);
-      rows.push(['Experimentos/Aprendizados', state.e3.experimentos || gv('experimentos') || '—']);
-
-      rows.push(['Período (Etapa 4)', formatPeriod(e4i, e4f)]);
 
       let html = '<table><thead><tr><th>Campo</th><th>Conteúdo</th></tr></thead><tbody>';
-      html += rows.map(r=>`<tr><td>${escapeHtml(r[0])}</td><td>${escapeHtml(r[1])}</td></tr>`).join('');
+      html += rows.map(r=>'<tr><td>'+escapeHtml(r[0])+'</td><td>'+escapeHtml(r[1])+'</td></tr>').join('');
       html += '</tbody></table>';
+
+      if(state.e3.incertezas && state.e3.incertezas.length){
+        const ordenado = state.e3.incertezas.slice().sort((a,b)=>{ const ra = Number(a.ref)||0, rb = Number(b.ref)||0; return ra - rb; });
+        html += '<h3 style="margin-top:16px">Etapa 3 – Incertezas</h3>';
+        html += '<table><thead><tr>'+
+          '<th>Referência</th><th>Incógnita</th><th>Impacto</th><th>Ação tática</th>'+
+          '<th>Tempo</th><th>Despesas</th><th>Homem/hora</th><th>Est. Implementação</th><th>Fator crítico</th>'+
+          '</tr></thead><tbody>';
+        html += ordenado.map(k=>'<tr>'+ 
+            '<td>'+escapeHtml(k.ref||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.incognita||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.impacto||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.acao||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.tempo||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.despesas||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.hh||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.estimativa||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.fator||'')+'</td>'+ 
+        '</tr>').join('');
+        html += '</tbody></table>';
+      }
 
       if(state.e4.kpis.length){
         html += '<h3 style="margin-top:16px">KPIs</h3>';
         html += '<table><thead><tr><th>KPI</th><th>Métrica</th><th>Meta</th><th>Atual</th><th>Frequência</th><th>Responsável</th><th>Fonte</th><th>Validação</th></tr></thead><tbody>';
-        html += state.e4.kpis.map(k=>`<tr>
-            <td>${escapeHtml(k.nome||'')}</td>
-            <td>${escapeHtml(k.metrica||'')}</td>
-            <td>${escapeHtml(k.meta||'')}</td>
-            <td>${escapeHtml(k.atual||'')}</td>
-            <td>${escapeHtml(k.freq||'')}</td>
-            <td>${escapeHtml(k.owner||'')}</td>
-            <td>${escapeHtml(k.fonte||'')}</td>
-            <td>${escapeHtml(k.valid||'')}</td>
-        </tr>`).join('');
+        html += state.e4.kpis.map(k=>'<tr>'+ 
+            '<td>'+escapeHtml(k.nome||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.metrica||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.meta||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.atual||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.freq||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.owner||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.fonte||'')+'</td>'+ 
+            '<td>'+escapeHtml(k.valid||'')+'</td>'+ 
+        '</tr>').join('');
         html += '</tbody></table>';
       }
 
@@ -457,16 +541,17 @@
 
     function formatPeriod(ini, fim){
       if(!ini && !fim) return '—';
-      if(ini && fim) return `${ini} → ${fim}`;
-      if(ini && !fim) return `${ini} → (em andamento)`;
-      return `(início não informado) → ${fim}`;
+      if(ini && fim) return ini+' → '+fim;
+      if(ini && !fim) return ini+' → (em andamento)';
+      return '(início não informado) → '+fim;
     }
 
     function escapeHtml(str){
       const d = document.createElement('div');
-      d.textContent = (str==null? '': String(str));
+      d.textContent = (str==null? '' : String(str));
       return d.innerHTML;
     }
+    function escapeAttr(str){ return String(str==null? '' : str).replace(/"/g,'&quot;'); }
 
     // --- Export/Import/Print/Clear ---
     el('btnSave').addEventListener('click', ()=>{ save(); alert('Salvo localmente.'); });
@@ -474,15 +559,16 @@
     el('btnBuild').addEventListener('click', buildReport);
     el('btnExport').addEventListener('click', ()=>{
       save();
+      const name = 'sgi-'+(state.e1.org||'unidade')+'.json';
       const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `sgi-${(state.e1.org||'unidade').toLowerCase().replace(/\s+/g,'-')}.json`;
+      a.download = name;
       a.click();
       URL.revokeObjectURL(a.href);
     });
     el('fileImport').addEventListener('change', (e)=>{
-      const file = e.target.files?.[0];
+      const file = e.target.files && e.target.files[0];
       if(!file) return;
       const reader = new FileReader();
       reader.onload = () => {
@@ -508,13 +594,9 @@
       }
     });
 
-    // Autosave para todos os campos (evita perder datas antes do relatório)
-    document.addEventListener('input', (e)=>{
-      if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save();
-    });
-    document.addEventListener('change', (e)=>{
-      if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save();
-    });
+    // Autosave
+    document.addEventListener('input', (e)=>{ if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save(); });
+    document.addEventListener('change', (e)=>{ if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save(); });
 
     // Inicialização
     load();

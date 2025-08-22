@@ -1,454 +1,91 @@
+<!-- ===== SGI Framework – GitHub Pages (v0.4, 2 arquivos) =====
+Instruções: crie DOIS arquivos na raiz do repositório:
+1) index.html (conteúdo logo abaixo)
+2) app.js (conteúdo mais abaixo)
+Opcional: crie um arquivo vazio chamado .nojekyll na raiz para evitar qualquer interferência do Jekyll.
+-->
+
+
+<!-- ===== (1) index.html ===== -->
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Framework SGI (INPI) – Protótipo</title>
-  <meta name="description" content="Protótipo do *framework* de Sistema de Gestão da Inovação (SGI) aplicado ao INPI, baseado na ISO 56000, TRIZ, TdM e Fuzzy/AHP." />
-  <style>
-    :root{
-      --bg:#0b1020;--panel:#101935;--muted:#8792a2;--text:#eef2ff;--accent:#7aa2ff;--accent-2:#64d2ff;--ok:#48c774;--warn:#f2b705;--err:#ff5c7c;--chip:#1c254a
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,#0b1020,#0b1020 40%,#0e1430);color:var(--text)}
-    header{position:sticky;top:0;background:rgba(11,16,32,.7);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid #1d274d;z-index:10}
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    h1{margin:0;font-size:clamp(20px,3.6vw,30px)}
-    h2{font-size:clamp(18px,3vw,24px);margin:20px 0 8px}
-    p,li{color:#c9d4ff}
-    .grid{display:grid;gap:12px}
-    @media(min-width:900px){.grid.cols-2{grid-template-columns:1fr 1fr}}
-    @media(min-width:900px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--panel);border:1px solid #1d274d;border-radius:16px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap}
-    button,.btn{appearance:none;border:1px solid #2b3870;background:#172149;color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
-    button:hover{border-color:#3e56c4}
-    .primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:0;color:#0b1020;font-weight:700}
-    .ok{background:linear-gradient(135deg,#48c774,#7fe3a0);border:0;color:#062315;font-weight:700}
-    .warn{background:linear-gradient(135deg,#f2b705,#ffd46b);border:0;color:#2a1f00;font-weight:700}
-    .danger{background:linear-gradient(135deg,#ff5c7c,#ff95a9);border:0;color:#32000b;font-weight:700}
-    input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2b3870;background:#0f1633;color:var(--text)}
-    label{display:block;margin:10px 0 6px;color:#cfe2ff}
-    small, .help{color:var(--muted)}
-    .chips{display:flex;flex-wrap:wrap;gap:8px}
-    .chip{background:var(--chip);color:#d6e1ff;border:1px solid #2b3870;border-radius:999px;padding:6px 10px;font-size:12px}
-    nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    nav.tabs button{padding:10px 12px;border-radius:999px}
-    nav.tabs button[aria-current="true"]{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#081229;border:0}
-    .kpis{display:grid;gap:8px}
-    @media(min-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
-    table{width:100%;border-collapse:collapse;border:1px solid #27336a;border-radius:12px;overflow:hidden}
-    th,td{padding:10px;border-bottom:1px solid #27336a}
-    th{background:#121c3f;text-align:left}
-    tr:hover td{background:#0f1838}
-    footer{opacity:.8}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Framework SGI (INPI) – Protótipo</title>
+<meta name="description" content="Protótipo do *framework* de Sistema de Gestão da Inovação (SGI) aplicado ao INPI, baseado na ISO 56000, TRIZ, TdM e Fuzzy/AHP." />
+<!-- CSP simples: permite script apenas deste domínio (self). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self';">
+<style>
+:root{ --bg:#0b1020;--panel:#101935;--muted:#8792a2;--text:#eef2ff;--accent:#7aa2ff;--accent-2:#64d2ff;--ok:#48c774;--warn:#f2b705;--err:#ff5c7c;--chip:#1c254a }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,#0b1020,#0b1020 40%,#0e1430);color:var(--text)}
+header{position:sticky;top:0;background:rgba(11,16,32,.7);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid #1d274d;z-index:10}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+h1{margin:0;font-size:clamp(20px,3.6vw,30px)}
+h2{font-size:clamp(18px,3vw,24px);margin:20px 0 8px}
+p,li{color:#c9d4ff}
+.grid{display:grid;gap:12px}
+@media(min-width:900px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--panel);border:1px solid #1d274d;border-radius:16px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{appearance:none;border:1px solid #2b3870;background:#172149;color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
+button:hover{border-color:#3e56c4}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:0;color:#0b1020;font-weight:700}
+.ok{background:linear-gradient(135deg,#48c774,#7fe3a0);border:0;color:#062315;font-weight:700}
+.warn{background:linear-gradient(135deg,#f2b705,#ffd46b);border:0;color:#2a1f00;font-weight:700}
+.danger{background:linear-gradient(135deg,#ff5c7c,#ff95a9);border:0;color:#32000b;font-weight:700}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2b3870;background:#0f1633;color:var(--text)}
+label{display:block;margin:10px 0 6px;color:#cfe2ff}
+small, .help{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--chip);color:#d6e1ff;border:1px solid #2b3870;border-radius:999px;padding:6px 10px;font-size:12px}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+nav.tabs button{padding:10px 12px;border-radius:999px}
+nav.tabs button[aria-current="true"]{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#081229;border:0}
+.kpis{display:grid;gap:8px}
+@media(min-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+table{width:100%;border-collapse:collapse;border:1px solid #27336a;border-radius:12px;overflow:hidden}
+th,td{padding:10px;border-bottom:1px solid #27336a}
+th{background:#121c3f;text-align:left}
+tr:hover td{background:#0f1838}
+footer{opacity:.8}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
 </head>
-<noscript>
-  <div style="background:#ffdfdf;color:#420; padding:12px; text-align:center; font-family:system-ui;">
-    ⚠️ O JavaScript está desativado. Ative scripts para usar o Framework SGI.
-  </div>
-</noscript>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>Framework SGI – Protótipo utilizável (INPI)</h1>
-      <p class="help">Baseado em ISO 56002/ISO 56007/ISO 56008, TRIZ (MPI), Teoria da Mudança e (Fuzzy) AHP. Funciona em celular e computador, salva no navegador.</p>
-      <div style="margin-top:6px;font-size:12px;opacity:.85">
-        Status do script: <span id="jsStatus">carregando…</span>
-      </div>
-    </div>
-  </header>
+<noscript>
+<div style="background:#ffdfdf;color:#420; padding:12px; text-align:center; font-family:system-ui;">
+⚠️ O JavaScript está desativado. Ative scripts para usar o Framework SGI.
+</div>
+</noscript>
 
-  <main class="wrap grid cols-2">
-    <section class="card">
-      <h2>Como usar</h2>
-      <ol>
-        <li>Siga as <strong>Etapas 1–4</strong> nas abas abaixo e preencha os campos.</li>
-        <li>Use <em>Salvar</em> para gravar no seu dispositivo (localStorage).</li>
-        <li>Você pode <em>Exportar JSON</em> para compartilhar e <em>Importar</em> depois.</li>
-        <li>Ao terminar, gere um <em>Relatório</em> (tabela) e use <em>Imprimir/PDF</em>.</li>
-      </ol>
-      <div class="toolbar" role="group" aria-label="Ações gerais">
-        <button class="primary" id="btnSave">Salvar</button>
-        <button id="btnLoad">Recarregar</button>
-        <button class="ok" id="btnExport">Exportar JSON</button>
-        <label class="btn" for="fileImport">Importar JSON</label>
-        <input id="fileImport" class="sr-only" type="file" accept="application/json" />
-        <button class="warn" id="btnPrint">Imprimir / PDF</button>
-        <button class="danger" id="btnClear">Limpar tudo</button>
-      </div>
-      <p class="help">Dica: o salvamento local é específico por navegador/dispositivo.</p>
-      <div class="chips">
-        <span class="chip">ISO 56002 (28 itens)</span>
-        <span class="chip">TRIZ – MPI</span>
-        <span class="chip">Teoria da Mudança</span>
-        <span class="chip">ISO 56007 (Ideação)</span>
-        <span class="chip">ISO 56008 (Medição)</span>
-        <span class="chip">AHP / Fuzzy AHP</span>
-      </div>
-    </section>
 
-    <section class="card">
-      <h2>Relatório rápido</h2>
-      <p class="help">Gera uma visão consolidada das ações e KPIs cadastrados.</p>
-      <div class="toolbar">
-        <button id="btnBuild">Atualizar relatório</button>
-      </div>
-      <div id="report"></div>
-    </section>
+<header>
+<div class="wrap">
+<h1>Framework SGI – Protótipo utilizável (INPI)</h1>
+<p class="help">Baseado em ISO 56002/ISO 56007/ISO 56008, TRIZ (MPI), Teoria da Mudança e (Fuzzy) AHP. Funciona em celular e computador, salva no navegador.</p>
+<div style="margin-top:6px;font-size:12px;opacity:.85">
+Status do script: <span id="jsStatus">carregando…</span>
+</div>
+</div>
+</header>
 
-    <section class="card" style="grid-column: 1 / -1;">
-      <nav class="tabs" id="tabs" aria-label="Etapas">
-        <button data-tab="e1" aria-current="true">Etapa 1 – Diagnóstico (ISO 56002)</button>
-        <button data-tab="e2">Etapa 2 – Ideação (TRIZ / ISO 56007)</button>
-        <button data-tab="e3">Etapa 3 – Tratamento das Incertezas</button>
-        <button data-tab="e4">Etapa 4 – KPIs e Validação (ISO 56008)</button>
-      </nav>
 
-      <!-- Etapa 1 -->
-      <div id="e1" class="tab card">
-        <h3>Etapa 1 – Diagnóstico & Priorização</h3>
-        <div class="grid cols-3">
-          <div>
-            <label for="org">Unidade/Setor</label>
-            <input id="org" placeholder="Ex.: DIPCT, SRPCT" />
-          </div>
-          <div>
-            <label for="e1_ini">Início (Etapa 1)</label>
-            <input id="e1_ini" type="date" />
-          </div>
-          <div>
-            <label for="e1_fim">Fim (Etapa 1)</label>
-            <input id="e1_fim" type="date" />
-          </div>
-        </div>
-        <label for="itensISO">Itens críticos ISO 56002 (separe por vírgulas)</label>
-        <input id="itensISO" placeholder="Ex.: 4.3 Planejamento, 7.1 Recursos, 10 Melhoria..." />
-        <label for="justISO">Justificativa / evidências</label>
-        <textarea id="justISO" rows="4" placeholder="Descreva brevemente as lacunas e impactos no serviço."></textarea>
-        <label for="ahpNotas">Notas de priorização (AHP/Fuzzy) – formato livre</label>
-        <textarea id="ahpNotas" rows="3" placeholder="Anote pesos, RC, ou links para planilhas."></textarea>
-      </div>
-
-      <!-- Etapa 2 -->
-      <div id="e2" class="tab card" hidden>
-        <h3>Etapa 2 – Ideação (TRIZ / ISO 56007)</h3>
-        <div class="grid cols-2">
-          <div>
-            <label for="e2_ini">Início (Etapa 2)</label>
-            <input id="e2_ini" type="date" />
-          </div>
-          <div>
-            <label for="e2_fim">Fim (Etapa 2)</label>
-            <input id="e2_fim" type="date" />
-          </div>
-        </div>
-        <label for="defProblema">Formulação do problema</label>
-        <textarea id="defProblema" rows="3" placeholder="Defina o problema a partir dos itens críticos."></textarea>
-        <label for="recursos">Recursos disponíveis</label>
-        <textarea id="recursos" rows="3" placeholder="Pessoas, dados, sistemas, tempo, orçamento, parcerias..."></textarea>
-        <label for="heuristicas">Heurísticas / princípios (MPI/TRIZ)</label>
-        <textarea id="heuristicas" rows="3" placeholder="Liste heurísticas/TRIZ selecionadas e por quê."></textarea>
-        <label for="ideias">Ideias geradas</label>
-        <textarea id="ideias" rows="4" placeholder="Registre ideias priorizadas para protótipos."></textarea>
-      </div>
-
-      <!-- Etapa 3 -->
-      <div id="e3" class="tab card" hidden>
-        <h3>Etapa 3 – Tratamento das Incertezas</h3>
-        <div class="grid cols-2">
-          <div>
-            <label for="e3_ini">Início (Etapa 3)</label>
-            <input id="e3_ini" type="date" />
-          </div>
-          <div>
-            <label for="e3_fim">Fim (Etapa 3)</label>
-            <input id="e3_fim" type="date" />
-          </div>
-        </div>
-        <p class="help">Responda às 9 perguntas para cada incerteza. Use o botão para adicionar registros.</p>
-        <div class="toolbar">
-          <button id="addInc">Adicionar incerteza</button>
-        </div>
-        <div id="incList" class="grid"></div>
-      </div>
-
-      <!-- Etapa 4 -->
-      <div id="e4" class="tab card" hidden>
-        <h3>Etapa 4 – KPIs, Metas e Validação (ISO 56008)</h3>
-        <div class="grid cols-2">
-          <div>
-            <label for="e4_ini">Início (Etapa 4)</label>
-            <input id="e4_ini" type="date" />
-          </div>
-          <div>
-            <label for="e4_fim">Fim (Etapa 4)</label>
-            <input id="e4_fim" type="date" />
-          </div>
-        </div>
-        <p class="help">Defina KPIs, metas e critérios de validação (ISO 56008). Use o botão para adicionar linhas.</p>
-        <div class="toolbar">
-          <button id="addKPI">Adicionar KPI</button>
-        </div>
-        <div class="kpis" id="kpiList"></div>
-      </div>
-    </section>
-
-    <section class="card" style="grid-column:1/-1">
-      <h2>Sobre</h2>
-      <p>Este protótipo visa disponibilizar, em formato simples e responsivo, o <em>framework</em> de SGI aplicado ao INPI, contemplando diagnóstico (ISO 56002), ideação (TRIZ/ISO 56007), tratamento das incertezas e validação por KPIs (ISO 56008). Os dados ficam no seu navegador e podem ser exportados/importados em JSON.</p>
-    </section>
-  </main>
-
-  <footer class="wrap" style="margin:40px auto 60px;">
-    <small>v0.3.2 – Protótipo estático (GitHub Pages). © 2025</small>
-  </footer>
-
-  <script>
-    (function(){
-      const setStatus = (txt) => { const s = document.getElementById('jsStatus'); if(s) s.textContent = txt; };
-      try{
-        setStatus('inicializando');
-        document.documentElement.classList.add('js');
-
-        // --- Utilitários ---
-        const STORAGE_KEY = 'sgi-prototipo-v032';
-        const el = id => document.getElementById(id);
-        const on = (node, evt, fn) => node && node.addEventListener(evt, fn);
-
-        const state = {
-          e1: { org:'', ini:'', fim:'', itensISO:'', justISO:'', ahpNotas:'' },
-          e2: { ini:'', fim:'', defProblema:'', recursos:'', heuristicas:'', ideias:'' },
-          e3: { ini:'', fim:'', incertezas: [] },
-          e4: { ini:'', fim:'', kpis: [] }
-        };
-
-        function load(){
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if(!raw) return;
-          try{
-            const data = JSON.parse(raw);
-            if(data.e1){ Object.assign(state.e1, data.e1); }
-            if(data.e2){ Object.assign(state.e2, data.e2); }
-            if(data.e3){ Object.assign(state.e3, data.e3); if(!Array.isArray(state.e3.incertezas)) state.e3.incertezas = []; }
-            if(data.e4){ Object.assign(state.e4, data.e4); if(!Array.isArray(state.e4.kpis)) state.e4.kpis = []; }
-          }catch(err){ console.error(err); }
-          // preencher inputs se existirem
-          if(el('org')) el('org').value = state.e1.org || '';
-          if(el('e1_ini')) el('e1_ini').value = state.e1.ini || '';
-          if(el('e1_fim')) el('e1_fim').value = state.e1.fim || '';
-          if(el('itensISO')) el('itensISO').value = state.e1.itensISO || '';
-          if(el('justISO')) el('justISO').value = state.e1.justISO || '';
-          if(el('ahpNotas')) el('ahpNotas').value = state.e1.ahpNotas || '';
-
-          if(el('e2_ini')) el('e2_ini').value = state.e2.ini || '';
-          if(el('e2_fim')) el('e2_fim').value = state.e2.fim || '';
-          if(el('defProblema')) el('defProblema').value = state.e2.defProblema || '';
-          if(el('recursos')) el('recursos').value = state.e2.recursos || '';
-          if(el('heuristicas')) el('heuristicas').value = state.e2.heuristicas || '';
-          if(el('ideias')) el('ideias').value = state.e2.ideias || '';
-
-          if(el('e3_ini')) el('e3_ini').value = state.e3.ini || '';
-          if(el('e3_fim')) el('e3_fim').value = state.e3.fim || '';
-          renderIncertezas();
-
-          if(el('e4_ini')) el('e4_ini').value = state.e4.ini || '';
-          if(el('e4_fim')) el('e4_fim').value = state.e4.fim || '';
-          renderKPIs();
-        }
-
-        function save(){
-          if(el('org')) state.e1.org = el('org').value.trim();
-          if(el('e1_ini')) state.e1.ini = el('e1_ini').value;
-          if(el('e1_fim')) state.e1.fim = el('e1_fim').value;
-          if(el('itensISO')) state.e1.itensISO = el('itensISO').value.trim();
-          if(el('justISO')) state.e1.justISO = el('justISO').value.trim();
-          if(el('ahpNotas')) state.e1.ahpNotas = el('ahpNotas').value.trim();
-
-          if(el('e2_ini')) state.e2.ini = el('e2_ini').value;
-          if(el('e2_fim')) state.e2.fim = el('e2_fim').value;
-          if(el('defProblema')) state.e2.defProblema = el('defProblema').value.trim();
-          if(el('recursos')) state.e2.recursos = el('recursos').value.trim();
-          if(el('heuristicas')) state.e2.heuristicas = el('heuristicas').value.trim();
-          if(el('ideias')) state.e2.ideias = el('ideias').value.trim();
-
-          if(el('e3_ini')) state.e3.ini = el('e3_ini').value;
-          if(el('e3_fim')) state.e3.fim = el('e3_fim').value;
-
-          if(el('e4_ini')) state.e4.ini = el('e4_ini').value;
-          if(el('e4_fim')) state.e4.fim = el('e4_fim').value;
-
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        }
-
-        // Abas
-        const tabs = el('tabs');
-        on(tabs, 'click', (e)=>{
-          const btn = e.target.closest('button[data-tab]');
-          if(!btn) return;
-          const tabId = btn.getAttribute('data-tab');
-          tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current','false'));
-          btn.setAttribute('aria-current','true');
-          document.querySelectorAll('.tab').forEach(p=>p.hidden = true);
-          const pane = document.getElementById(tabId);
-          if(pane) pane.hidden = false;
-        });
-
-        // Etapa 3 – Incertezas
-        function defaultInc(){
-          return { ref:'', incognita:'Proposta 1', impacto:'Mediano', acao:'', tempo:'MePr', despesas:'', hh:'', estimativa:'', fator:'' };
-        }
-        function incTemplate(item, idx){
-          const propostas = Array.from({length:20}, (_,i)=>'Proposta '+(i+1));
-          const impactos = ['Crítico','Alto','Mediano','Baixo'];
-          const tempos = ['LoPr','MePr','Imed'];
-          return (
-            '<div class="card" data-idx="'+idx+'">'+
-              '<div class="grid cols-3">'+
-                '<div><label>Referência</label><input type="number" min="1" step="1" value="'+escapeAttr(item.ref||'')+'" data-field="ref" placeholder="1, 2, 3..." /></div>'+
-                '<div><label>Incertezas/incógnitas críticas</label><select data-field="incognita">'+ propostas.map(p=>'
-<option '+(item.incognita===p?'selected':'')+'>'+p+'</option>').join('') +'</select></div>'+
-                '<div><label>Impacto no problema</label><select data-field="impacto">'+ ['Crítico','Alto','Mediano','Baixo'].map(p=>'
-<option '+(item.impacto===p?'selected':'')+'>'+p+'</option>').join('') +'</select></div>'+
-              '</div>'+
-              '<div><label>Ação tática para reduzir a incerteza</label><textarea rows="3" data-field="acao" placeholder="Ex.: Apresentar resultados à CGPCT/DIRPA">'+escapeHtml(item.acao||'')+'</textarea></div>'+ 
-              '<div class="grid cols-3">'+
-                '<div><label>Tempo de resposta da ação tática</label><select data-field="tempo">'+ tempos.map(p=>'
-<option '+(item.tempo===p?'selected':'')+'>'+p+'</option>').join('') +'</select><small class="help">LoPr: > 1 ano • MePr: até 12 meses • Imed: < 1 mês</small></div>'+ 
-                '<div><label>Despesas diretas</label><input type="number" min="0" step="0.01" data-field="despesas" value="'+escapeAttr(item.despesas||'')+'" placeholder="Ex.: 15000" /></div>'+ 
-                '<div><label>Homem/hora</label><input type="number" min="0" step="0.1" data-field="hh" value="'+escapeAttr(item.hh||'')+'" placeholder="Ex.: 80" /></div>'+ 
-              '</div>'+ 
-              '<div class="grid cols-2">'+ 
-                '<div><label>Estimativa de Implementação</label><input type="date" data-field="estimativa" value="'+escapeAttr(item.estimativa||'')+'" /></div>'+ 
-                '<div><label>Fator crítico de inviabilização da oportunidade</label><textarea rows="2" data-field="fator" placeholder="Ex.: dependência externa, limitação legal">'+escapeHtml(item.fator||'')+'</textarea></div>'+ 
-              '</div>'+ 
-              '<div class="toolbar"><button class="danger" data-del>Remover</button></div>'+ 
-            '</div>'
-          );
-        }
-        function renderIncertezas(){
-          const list = el('incList'); if(!list) return;
-          if(!state.e3.incertezas.length){ list.innerHTML = '<p class="help">Nenhuma incerteza adicionada ainda.</p>'; return; }
-          list.innerHTML = state.e3.incertezas.map((it,i)=>incTemplate(it,i)).join('');
-        }
-        function addIncerteza(){ state.e3.incertezas.push(defaultInc()); renderIncertezas(); save(); }
-        on(el('addInc'), 'click', addIncerteza);
-        on(el('incList'), 'input', (e)=>{ const card = e.target.closest('[data-idx]'); if(!card) return; const idx = Number(card.getAttribute('data-idx')); const field = e.target.getAttribute('data-field'); if(!field) return; state.e3.incertezas[idx][field] = e.target.value; save(); });
-        on(el('incList'), 'change', (e)=>{ const card = e.target.closest('[data-idx]'); if(!card) return; const idx = Number(card.getAttribute('data-idx')); const field = e.target.getAttribute('data-field'); if(!field) return; state.e3.incertezas[idx][field] = e.target.value; save(); });
-        on(el('incList'), 'click', (e)=>{ if(e.target.matches('[data-del]')){ const card = e.target.closest('[data-idx]'); const idx = Number(card.getAttribute('data-idx')); state.e3.incertezas.splice(idx,1); renderIncertezas(); save(); }});
-
-        // KPIs
-        function kpiTemplate(kpi, idx){
-          return (
-            '<div class="card" data-idx="'+idx+'">'+
-              '<div class="grid cols-2">'+
-                '<div><label>Nome do KPI</label><input value="'+escapeAttr(kpi.nome||'')+'" data-field="nome" placeholder="Ex.: Tempo médio de exame PCT" /></div>'+ 
-                '<div><label>Frequência</label><select data-field="freq">'+ ['Mensal','Trimestral','Semestral','Anual'].map(f=>'
-<option '+(kpi.freq===f?'selected':'')+'>'+f+'</option>').join('') +'</select></div>'+ 
-              '</div>'+ 
-              '<div class="grid cols-2">'+ 
-                '<div><label>Métrica (definição)</label><input value="'+escapeAttr(kpi.metrica||'')+'" data-field="metrica" placeholder="Como é calculado?" /></div>'+ 
-                '<div><label>Meta</label><input value="'+escapeAttr(kpi.meta||'')+'" data-field="meta" placeholder="Ex.: ≤ 30 dias" /></div>'+ 
-              '</div>'+ 
-              '<div class="grid cols-2">'+ 
-                '<div><label>Responsável</label><input value="'+escapeAttr(kpi.owner||'')+'" data-field="owner" placeholder="Equipe/Servidor" /></div>'+ 
-                '<div><label>Fonte de dados</label><input value="'+escapeAttr(kpi.fonte||'')+'" data-field="fonte" placeholder="Sistema/planilha" /></div>'+ 
-              '</div>'+ 
-              '<div class="grid cols-2">'+ 
-                '<div><label>Valor atual</label><input value="'+escapeAttr(kpi.atual||'')+'" data-field="atual" placeholder="Ex.: 45 dias (jul/2025)" /></div>'+ 
-                '<div><label>Critério de validação</label><input value="'+escapeAttr(kpi.valid||'')+'" data-field="valid" placeholder="Ex.: 3 ciclos seguidos ≤ meta" /></div>'+ 
-              '</div>'+ 
-              '<div class="toolbar"><button class="danger" data-del>Remover</button></div>'+ 
-            '</div>'
-          );
-        }
-        function renderKPIs(){ const list = el('kpiList'); if(!list) return; list.innerHTML = state.e4.kpis.map((k, i)=>kpiTemplate(k,i)).join(''); }
-        function addKPI(){ state.e4.kpis.push({freq:'Mensal'}); renderKPIs(); save(); }
-        on(el('addKPI'), 'click', addKPI);
-        on(el('kpiList'), 'input', (e)=>{ const card = e.target.closest('[data-idx]'); if(!card) return; const idx = Number(card.getAttribute('data-idx')); const field = e.target.getAttribute('data-field'); if(!field) return; state.e4.kpis[idx][field] = e.target.value; save(); });
-        on(el('kpiList'), 'click', (e)=>{ if(e.target.matches('[data-del]')){ const card = e.target.closest('[data-idx]'); const idx = Number(card.getAttribute('data-idx')); state.e4.kpis.splice(idx,1); renderKPIs(); save(); }});
-
-        // Relatório
-        function buildReport(){
-          save();
-          const gv = (id)=>{ const n = document.getElementById(id); return n ? (n.value || '') : ''; };
-          const e1i = state.e1.ini || gv('e1_ini');
-          const e1f = state.e1.fim || gv('e1_fim');
-          const e2i = state.e2.ini || gv('e2_ini');
-          const e2f = state.e2.fim || gv('e2_fim');
-          const e3i = state.e3.ini || gv('e3_ini');
-          const e3f = state.e3.fim || gv('e3_fim');
-          const e4i = state.e4.ini || gv('e4_ini');
-          const e4f = state.e4.fim || gv('e4_fim');
-
-          const rows = [];
-          rows.push(['Unidade', state.e1.org || gv('org')]);
-          rows.push(['Período (Etapa 1)', formatPeriod(e1i, e1f)]);
-          rows.push(['Itens ISO 56002 críticos', state.e1.itensISO || gv('itensISO') || '—']);
-          rows.push(['Justificativa', state.e1.justISO || gv('justISO') || '—']);
-          rows.push(['Notas AHP/Fuzzy', state.e1.ahpNotas || gv('ahpNotas') || '—']);
-
-          rows.push(['Período (Etapa 2)', formatPeriod(e2i, e2f)]);
-          rows.push(['Problema (TRIZ)', state.e2.defProblema || gv('defProblema') || '—']);
-          rows.push(['Recursos', state.e2.recursos || gv('recursos') || '—']);
-          rows.push(['Heurísticas (MPI/TRIZ)', state.e2.heuristicas || gv('heuristicas') || '—']);
-          rows.push(['Ideias priorizadas', state.e2.ideias || gv('ideias') || '—']);
-
-          rows.push(['Período (Etapa 3)', formatPeriod(e3i, e3f)]);
-
-          let html = '<table><thead><tr><th>Campo</th><th>Conteúdo</th></tr></thead><tbody>' + rows.map(r=>'<tr><td>'+escapeHtml(r[0])+'</td><td>'+escapeHtml(r[1])+'</td></tr>').join('') + '</tbody></table>';
-
-          if(state.e3.incertezas && state.e3.incertezas.length){
-            const ordenado = state.e3.incertezas.slice().sort((a,b)=>{ const ra = Number(a.ref)||0, rb = Number(b.ref)||0; return ra - rb; });
-            html += '<h3 style="margin-top:16px">Etapa 3 – Incertezas</h3>';
-            html += '<table><thead><tr><th>Referência</th><th>Incógnita</th><th>Impacto</th><th>Ação tática</th><th>Tempo</th><th>Despesas</th><th>Homem/hora</th><th>Est. Implementação</th><th>Fator crítico</th></tr></thead><tbody>' +
-              ordenado.map(k=>'<tr>'+['ref','incognita','impacto','acao','tempo','despesas','hh','estimativa','fator'].map(f=>'<td>'+escapeHtml(k[f]||'')+'</td>').join('')+'</tr>').join('') +
-              '</tbody></table>';
-          }
-
-          if(state.e4.kpis.length){
-            html += '<h3 style="margin-top:16px">KPIs</h3>';
-            html += '<table><thead><tr><th>KPI</th><th>Métrica</th><th>Meta</th><th>Atual</th><th>Frequência</th><th>Responsável</th><th>Fonte</th><th>Validação</th></tr></thead><tbody>' +
-              state.e4.kpis.map(k=>'<tr>'+['nome','metrica','meta','atual','freq','owner','fonte','valid'].map(f=>'<td>'+escapeHtml(k[f]||'')+'</td>').join('')+'</tr>').join('') +
-              '</tbody></table>';
-          }
-
-          const container = el('report'); if(container) container.innerHTML = html;
-        }
-        on(el('btnBuild'), 'click', buildReport);
-
-        function formatPeriod(ini, fim){ if(!ini && !fim) return '—'; if(ini && fim) return ini+' → '+fim; if(ini && !fim) return ini+' → (em andamento)'; return '(início não informado) → '+fim; }
-        function escapeHtml(str){ const d = document.createElement('div'); d.textContent = (str==null? '' : String(str)); return d.innerHTML; }
-        function escapeAttr(str){ return String(str==null? '' : str).replace(/"/g,'&quot;'); }
-
-        // Export/Import/Print/Clear
-        on(el('btnSave'), 'click', ()=>{ save(); alert('Salvo localmente.'); });
-        on(el('btnLoad'), 'click', ()=>{ load(); alert('Dados recarregados.'); });
-        on(el('btnExport'), 'click', ()=>{ save(); const name = 'sgi-'+(state.e1.org||'unidade')+'.json'; const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href); });
-        on(el('fileImport'), 'change', (e)=>{ const file = e.target.files && e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = () => { try{ const data = JSON.parse(reader.result); localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); load(); alert('Importado com sucesso.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(file); });
-        on(el('btnPrint'), 'click', ()=>{ buildReport(); setTimeout(()=>window.print(), 100); });
-        on(el('btnClear'), 'click', ()=>{ if(confirm('Tem certeza que deseja apagar todos os dados locais?')){ localStorage.removeItem(STORAGE_KEY); location.reload(); } });
-
-        // Autosave
-        document.addEventListener('input', (e)=>{ if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save(); });
-        document.addEventListener('change', (e)=>{ if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save(); });
-
-        // Inicialização
-        load();
-        buildReport();
-        setStatus('ok');
-      }catch(err){
-        console.error(err);
-        setStatus('erro – abra o Console (F12)');
-        const box = document.createElement('div');
-        box.style.cssText = 'position:fixed;bottom:10px;left:10px;right:10px;background:#3b0d0d;color:#ffdede;padding:10px;border:1px solid #a33;border-radius:10px;z-index:9999;font-family:system-ui';
-        box.textContent = 'Ocorreu um erro no script: '+ (err && err.message ? err.message : err);
-        document.body.appendChild(box);
-      }
-    })();
-  </script>
-</body>
-</html>
+<main class="wrap grid cols-2">
+<section class="card">
+<h2>Como usar</h2>
+<ol>
+<li>Siga as <strong>Etapas 1–4</strong> nas abas abaixo e preencha os campos.</li>
+<li>Use <em>Salvar</em> para gravar no seu dispositivo (localStorage).</li>
+<li>Você pode <em>Exportar JSON</em> para compartilhar e <em>Importar</em> depois.</li>
+<li>Ao terminar, gere um <em>Relatório</em> (tabela) e use <em>Imprimir/PDF</em>.</li>
+</ol>
+<div class="toolbar" role="group" aria-label="Ações gerais">
+<button class="primary" id="btnSave">Salvar</button>
+<button id="btnLoad">Recarregar</button>
+<button class="ok" id="btnExport">Exportar JSON</button>
+<label class="btn" for="fileImport">Importar JSON</label>
+<input id="fileImport" class="sr-only" type="file" accept="application/json" />

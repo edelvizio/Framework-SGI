@@ -1,115 +1,79 @@
-<!-- ===== SGI Framework – GitHub Pages (v0.4, 2 arquivos) =====
-Instruções: crie DOIS arquivos na raiz do repositório:
-  1) index.html  (conteúdo logo abaixo)
-  2) app.js      (conteúdo mais abaixo)
-Opcional: crie um arquivo vazio chamado .nojekyll na raiz para evitar qualquer interferência do Jekyll.
--->
-
-<!-- ===== (1) index.html ===== -->
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Framework SGI (INPI) – Protótipo</title>
-  <meta name="description" content="Protótipo do *framework* de Sistema de Gestão da Inovação (SGI) aplicado ao INPI, baseado na ISO 56000, TRIZ, TdM e Fuzzy/AHP." />
-  <!-- CSP simples: permite script apenas deste domínio (self). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self';">
   <style>
     :root{ --bg:#0b1020;--panel:#101935;--muted:#8792a2;--text:#eef2ff;--accent:#7aa2ff;--accent-2:#64d2ff;--ok:#48c774;--warn:#f2b705;--err:#ff5c7c;--chip:#1c254a }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,#0b1020,#0b1020 40%,#0e1430);color:var(--text)}
-    header{position:sticky;top:0;background:rgba(11,16,32,.7);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid #1d274d;z-index:10}
+    body{margin:0;font:16px/1.5 system-ui;background:#0b1020;color:var(--text)}
+    header{position:sticky;top:0;background:#0b1020;border-bottom:1px solid #1d274d}
     .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    h1{margin:0;font-size:clamp(20px,3.6vw,30px)}
-    h2{font-size:clamp(18px,3vw,24px);margin:20px 0 8px}
-    p,li{color:#c9d4ff}
+    h1{margin:0;font-size:22px}
+    h2{font-size:18px;margin:18px 0 8px}
     .grid{display:grid;gap:12px}
     @media(min-width:900px){.grid.cols-2{grid-template-columns:1fr 1fr}}
     @media(min-width:900px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--panel);border:1px solid #1d274d;border-radius:16px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    .card{background:var(--panel);border:1px solid #1d274d;border-radius:12px;padding:16px}
     .toolbar{display:flex;gap:8px;flex-wrap:wrap}
-    button,.btn{appearance:none;border:1px solid #2b3870;background:#172149;color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
-    button:hover{border-color:#3e56c4}
-    .primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:0;color:#0b1020;font-weight:700}
-    .ok{background:linear-gradient(135deg,#48c774,#7fe3a0);border:0;color:#062315;font-weight:700}
-    .warn{background:linear-gradient(135deg,#f2b705,#ffd46b);border:0;color:#2a1f00;font-weight:700}
-    .danger{background:linear-gradient(135deg,#ff5c7c,#ff95a9);border:0;color:#32000b;font-weight:700}
-    input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2b3870;background:#0f1633;color:var(--text)}
-    label{display:block;margin:10px 0 6px;color:#cfe2ff}
-    small, .help{color:var(--muted)}
+    button,.btn{border:1px solid #2b3870;background:#172149;color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
+    input,select,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #2b3870;background:#0f1633;color:var(--text)}
+    label{display:block;margin:8px 0 6px}
     .chips{display:flex;flex-wrap:wrap;gap:8px}
-    .chip{background:var(--chip);color:#d6e1ff;border:1px solid #2b3870;border-radius:999px;padding:6px 10px;font-size:12px}
+    .chip{background:#1c254a;border:1px solid #2b3870;border-radius:999px;padding:6px 10px;font-size:12px}
     nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    nav.tabs button{padding:10px 12px;border-radius:999px}
     nav.tabs button[aria-current="true"]{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#081229;border:0}
     .kpis{display:grid;gap:8px}
     @media(min-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
     table{width:100%;border-collapse:collapse;border:1px solid #27336a;border-radius:12px;overflow:hidden}
     th,td{padding:10px;border-bottom:1px solid #27336a}
     th{background:#121c3f;text-align:left}
-    tr:hover td{background:#0f1838}
-    footer{opacity:.8}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
 </head>
 <body>
   <noscript>
-    <div style="background:#ffdfdf;color:#420; padding:12px; text-align:center; font-family:system-ui;">
-      ⚠️ O JavaScript está desativado. Ative scripts para usar o Framework SGI.
+    <div style="background:#ffdfdf;color:#420;padding:12px;text-align:center;font-family:system-ui;">
+      Habilite JavaScript para usar o Framework SGI.
     </div>
   </noscript>
 
   <header>
     <div class="wrap">
-      <h1>Framework SGI – Protótipo utilizável (INPI)</h1>
-      <p class="help">Baseado em ISO 56002/ISO 56007/ISO 56008, TRIZ (MPI), Teoria da Mudança e (Fuzzy) AHP. Funciona em celular e computador, salva no navegador.</p>
-      <div style="margin-top:6px;font-size:12px;opacity:.85">
-        Status do script: <span id="jsStatus">carregando…</span>
-      </div>
+      <h1>Framework SGI – INPI</h1>
+      <div style="margin-top:6px;font-size:12px;opacity:.85">Status do script: <span id="jsStatus">carregando...</span></div>
     </div>
   </header>
 
   <main class="wrap grid cols-2">
     <section class="card">
       <h2>Como usar</h2>
-      <ol>
-        <li>Siga as <strong>Etapas 1–4</strong> nas abas abaixo e preencha os campos.</li>
-        <li>Use <em>Salvar</em> para gravar no seu dispositivo (localStorage).</li>
-        <li>Você pode <em>Exportar JSON</em> para compartilhar e <em>Importar</em> depois.</li>
-        <li>Ao terminar, gere um <em>Relatório</em> (tabela) e use <em>Imprimir/PDF</em>.</li>
-      </ol>
-      <div class="toolbar" role="group" aria-label="Ações gerais">
-        <button class="primary" id="btnSave">Salvar</button>
+      <div class="toolbar" role="group" aria-label="Ações">
+        <button id="btnSave">Salvar</button>
         <button id="btnLoad">Recarregar</button>
-        <button class="ok" id="btnExport">Exportar JSON</button>
+        <button id="btnExport">Exportar JSON</button>
         <label class="btn" for="fileImport">Importar JSON</label>
-        <input id="fileImport" class="sr-only" type="file" accept="application/json" />
-        <button class="warn" id="btnPrint">Imprimir / PDF</button>
-        <button class="danger" id="btnClear">Limpar tudo</button>
+        <input id="fileImport" class="sr-only" type="file" accept="application/json">
+        <button id="btnPrint">Imprimir / PDF</button>
+        <button id="btnClear">Limpar tudo</button>
       </div>
-      <p class="help">Dica: o salvamento local é específico por navegador/dispositivo.</p>
-      <div class="chips">
+      <p class="chips">
         <span class="chip">ISO 56002 (28 itens)</span>
         <span class="chip">TRIZ – MPI</span>
         <span class="chip">Teoria da Mudança</span>
-        <span class="chip">ISO 56007 (Ideação)</span>
-        <span class="chip">ISO 56008 (Medição)</span>
-        <span class="chip">AHP / Fuzzy AHP</span>
-      </div>
+        <span class="chip">ISO 56007</span>
+        <span class="chip">ISO 56008</span>
+      </p>
     </section>
 
     <section class="card">
       <h2>Relatório rápido</h2>
-      <p class="help">Gera uma visão consolidada das ações e KPIs cadastrados.</p>
-      <div class="toolbar">
-        <button id="btnBuild">Atualizar relatório</button>
-      </div>
+      <div class="toolbar"><button id="btnBuild">Atualizar relatório</button></div>
       <div id="report"></div>
     </section>
 
-    <section class="card" style="grid-column: 1 / -1;">
+    <section class="card" style="grid-column:1/-1">
       <nav class="tabs" id="tabs" aria-label="Etapas">
         <button data-tab="e1" aria-current="true">Etapa 1 – Diagnóstico (ISO 56002)</button>
         <button data-tab="e2">Etapa 2 – Ideação (TRIZ / ISO 56007)</button>
@@ -117,106 +81,64 @@ Opcional: crie um arquivo vazio chamado .nojekyll na raiz para evitar qualquer i
         <button data-tab="e4">Etapa 4 – KPIs e Validação (ISO 56008)</button>
       </nav>
 
-      <!-- Etapa 1 -->
       <div id="e1" class="tab card">
         <h3>Etapa 1 – Diagnóstico & Priorização</h3>
         <div class="grid cols-3">
-          <div>
-            <label for="org">Unidade/Setor</label>
-            <input id="org" placeholder="Ex.: DIPCT, SRPCT" />
-          </div>
-          <div>
-            <label for="e1_ini">Início (Etapa 1)</label>
-            <input id="e1_ini" type="date" />
-          </div>
-          <div>
-            <label for="e1_fim">Fim (Etapa 1)</label>
-            <input id="e1_fim" type="date" />
-          </div>
+          <div><label for="org">Unidade/Setor</label><input id="org" placeholder="Ex.: DIPCT, SRPCT"></div>
+          <div><label for="e1_ini">Início (Etapa 1)</label><input id="e1_ini" type="date"></div>
+          <div><label for="e1_fim">Fim (Etapa 1)</label><input id="e1_fim" type="date"></div>
         </div>
-        <label for="itensISO">Itens críticos ISO 56002 (separe por vírgulas)</label>
-        <input id="itensISO" placeholder="Ex.: 4.3 Planejamento, 7.1 Recursos, 10 Melhoria..." />
+        <label for="itensISO">Itens críticos ISO 56002</label>
+        <input id="itensISO" placeholder="Ex.: 4.3 Planejamento, 7.1 Recursos...">
         <label for="justISO">Justificativa / evidências</label>
-        <textarea id="justISO" rows="4" placeholder="Descreva brevemente as lacunas e impactos no serviço."></textarea>
-        <label for="ahpNotas">Notas de priorização (AHP/Fuzzy) – formato livre</label>
-        <textarea id="ahpNotas" rows="3" placeholder="Anote pesos, RC, ou links para planilhas."></textarea>
+        <textarea id="justISO" rows="3"></textarea>
+        <label for="ahpNotas">Notas de priorização (AHP/Fuzzy)</label>
+        <textarea id="ahpNotas" rows="3"></textarea>
       </div>
 
-      <!-- Etapa 2 -->
       <div id="e2" class="tab card" hidden>
         <h3>Etapa 2 – Ideação (TRIZ / ISO 56007)</h3>
         <div class="grid cols-2">
-          <div>
-            <label for="e2_ini">Início (Etapa 2)</label>
-            <input id="e2_ini" type="date" />
-          </div>
-          <div>
-            <label for="e2_fim">Fim (Etapa 2)</label>
-            <input id="e2_fim" type="date" />
-          </div>
+          <div><label for="e2_ini">Início (Etapa 2)</label><input id="e2_ini" type="date"></div>
+          <div><label for="e2_fim">Fim (Etapa 2)</label><input id="e2_fim" type="date"></div>
         </div>
         <label for="defProblema">Formulação do problema</label>
-        <textarea id="defProblema" rows="3" placeholder="Defina o problema a partir dos itens críticos."></textarea>
+        <textarea id="defProblema" rows="3"></textarea>
         <label for="recursos">Recursos disponíveis</label>
-        <textarea id="recursos" rows="3" placeholder="Pessoas, dados, sistemas, tempo, orçamento, parcerias..."></textarea>
+        <textarea id="recursos" rows="3"></textarea>
         <label for="heuristicas">Heurísticas / princípios (MPI/TRIZ)</label>
-        <textarea id="heuristicas" rows="3" placeholder="Liste heurísticas/TRIZ selecionadas e por quê."></textarea>
+        <textarea id="heuristicas" rows="3"></textarea>
         <label for="ideias">Ideias geradas</label>
-        <textarea id="ideias" rows="4" placeholder="Registre ideias priorizadas para protótipos."></textarea>
+        <textarea id="ideias" rows="3"></textarea>
       </div>
 
-      <!-- Etapa 3 -->
       <div id="e3" class="tab card" hidden>
         <h3>Etapa 3 – Tratamento das Incertezas</h3>
         <div class="grid cols-2">
-          <div>
-            <label for="e3_ini">Início (Etapa 3)</label>
-            <input id="e3_ini" type="date" />
-          </div>
-          <div>
-            <label for="e3_fim">Fim (Etapa 3)</label>
-            <input id="e3_fim" type="date" />
-          </div>
+          <div><label for="e3_ini">Início (Etapa 3)</label><input id="e3_ini" type="date"></div>
+          <div><label for="e3_fim">Fim (Etapa 3)</label><input id="e3_fim" type="date"></div>
         </div>
         <p class="help">Responda às 9 perguntas para cada incerteza. Use o botão para adicionar registros.</p>
-        <div class="toolbar">
-          <button id="addInc">Adicionar incerteza</button>
-        </div>
+        <div class="toolbar"><button id="addInc">Adicionar incerteza</button></div>
         <div id="incList" class="grid"></div>
       </div>
 
-      <!-- Etapa 4 -->
       <div id="e4" class="tab card" hidden>
         <h3>Etapa 4 – KPIs, Metas e Validação (ISO 56008)</h3>
         <div class="grid cols-2">
-          <div>
-            <label for="e4_ini">Início (Etapa 4)</label>
-            <input id="e4_ini" type="date" />
-          </div>
-          <div>
-            <label for="e4_fim">Fim (Etapa 4)</label>
-            <input id="e4_fim" type="date" />
-          </div>
+          <div><label for="e4_ini">Início (Etapa 4)</label><input id="e4_ini" type="date"></div>
+          <div><label for="e4_fim">Fim (Etapa 4)</label><input id="e4_fim" type="date"></div>
         </div>
-        <p class="help">Defina KPIs, metas e critérios de validação (ISO 56008). Use o botão para adicionar linhas.</p>
-        <div class="toolbar">
-          <button id="addKPI">Adicionar KPI</button>
-        </div>
+        <div class="toolbar"><button id="addKPI">Adicionar KPI</button></div>
         <div class="kpis" id="kpiList"></div>
       </div>
     </section>
-
-    <section class="card" style="grid-column:1/-1">
-      <h2>Sobre</h2>
-      <p>Este protótipo visa disponibilizar, em formato simples e responsivo, o <em>framework</em> de SGI aplicado ao INPI, contemplando diagnóstico (ISO 56002), ideação (TRIZ/ISO 56007), tratamento das incertezas e validação por KPIs (ISO 56008). Os dados ficam no seu navegador e podem ser exportados/importados em JSON.</p>
-    </section>
   </main>
 
-  <footer class="wrap" style="margin:40px auto 60px;">
-    <small>v0.4 – Protótipo estático (GitHub Pages). © 2025 · <span id="jsStatusFoot">inicializando…</span></small>
+  <footer class="wrap" style="margin:32px auto 60px;">
+    <small>v0.4.1 · <span id="jsStatusFoot">carregando...</span></small>
   </footer>
 
-  <!-- Importa o JavaScript externo (evita bloqueio de inline JS) -->
   <script src="app.js" defer></script>
 </body>
 </html>
